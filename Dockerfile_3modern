@@ -1,0 +1,64 @@
+# Use the modern base image
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel
+
+LABEL maintainer="Deepfake"
+
+# 1. Install System Dependencies
+# Removed python3.7 specific calls; we use the pre-installed optimized Python
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    automake \
+    build-essential \
+    git \
+    ca-certificates \
+    libfreetype6-dev \
+    libtool \
+    pkg-config \
+    cmake \
+    ffmpeg \
+    libavformat-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavutil-dev \
+    libavfilter-dev \
+    libswscale-dev \
+    libswresample-dev \
+    libpostproc-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+# 2. Install Python dependencies
+# Note: I removed the strict version pins on old packages to ensure compatibility with Python 3.11+
+RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir \
+    certifi \
+    dlib \
+    imageio \
+    imgaug \
+    scipy \
+    seaborn \
+    pyyaml \
+    imutils \
+    opencv-python \
+    scikit-image \
+    scikit-learn \
+    efficientnet-pytorch \
+    timm \
+    segmentation-models-pytorch \
+    torchtoolbox \
+    tensorboard \
+    loralib \
+    pytorchvideo \
+    einops \
+    transformers \
+    filterpy \
+    simplejson \
+    kornia \
+    git+https://github.com/openai/CLIP.git
+
+RUN sed -i 's/set(np.sctypes\["float"\])/{np.float16, np.float32, np.float64, np.longdouble}/g' /opt/conda/lib/python3.11/site-packages/imgaug/imgaug.py && \
+    sed -i 's/set(np.sctypes\["int"\])/{np.int8, np.int16, np.int32, np.int64}/g' /opt/conda/lib/python3.11/site-packages/imgaug/imgaug.py && \
+    sed -i 's/set(np.sctypes\["uint"\])/{np.uint8, np.uint16, np.uint32, np.uint64}/g' /opt/conda/lib/python3.11/site-packages/imgaug/imgaug.py
+
+ENV MODEL_NAME=deepfakebench
+EXPOSE 6000
