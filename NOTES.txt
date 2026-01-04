@@ -1,0 +1,12 @@
+#Enter Docker Container
+sudo docker exec -it cranky_kare /bin/bash
+
+#troubleshooting this test command
+#python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" "Celeb-DF-v2" "DFDCP" --weights_path ./training/weights/xception_best.pth
+
+python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/xception_best.pth
+
+#fixed the no run on GPU here
+/app/training/dataset/lsda_dataset.py
+
+#download CelebDF1
