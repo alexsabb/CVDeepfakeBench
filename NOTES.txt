@@ -1,3 +1,6 @@
+#Run the Docker Image with standard volume mapping
+sudo docker run -itd -v /home/alex/Documents/DEV/2026_01_03_DEEPFAKEBENCH/DeepfakeBench/:/app/ --shm-size 64G deepfakebench
+
 #Enter Docker Container
 sudo docker exec -it cranky_kare /bin/bash
 
