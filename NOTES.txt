@@ -1,11 +1,20 @@
+#STEP 1
 #build it
 sudo docker build -t deepfakebench -f Dockerfile_3modern .
 
+#STEP 2
 #Run the Docker Image with standard volume mapping
-sudo docker run -itd -v /home/alex/Documents/DEV/2026_01_03_DEEPFAKEBENCH/DeepfakeBench/:/app/ --shm-size 64G deepfakebench
+#sudo docker run -itd -v /home/alex/Documents/DEV/2026_01_03_DEEPFAKEBENCH/DeepfakeBench/:/app/ --shm-size 64G deepfakebench
+sudo docker run -itd -v /home/alex/Desktop/DEV/2026_01_04_CVDEEPFAKEBENCH/CVDeepfakeBench/:/app/ --shm-size 64G deepfakebench
 
+#STEP 3
 #Enter Docker Container
-sudo docker exec -it cranky_kare /bin/bash
+#sudo docker exec -it cranky_kare /bin/bash
+sudo docker exec -it stupefied_pascal /bin/bash
+
+#STEP 3.1
+#Add xception_best.pth
+#Add shape_predictor_81_face_landmarks.dat.zip
 
 #troubleshooting this test command
 #python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" "Celeb-DF-v2" "DFDCP" --weights_path ./training/weights/xception_best.pth
