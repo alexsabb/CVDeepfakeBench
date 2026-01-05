@@ -280,40 +280,80 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         return frame_path_list, label_list, video_name_list
 
      
+    # def load_rgb(self, file_path):
+    #     """
+    #     Load an RGB image from a file path and resize it to a specified resolution.
+
+    #     Args:
+    #         file_path: A string indicating the path to the image file.
+
+    #     Returns:
+    #         An Image object containing the loaded and resized image.
+
+    #     Raises:
+    #         ValueError: If the loaded image is None.
+    #     """
+    #     size = self.config['resolution'] # if self.mode == "train" else self.config['resolution']
+    #     if not self.lmdb:
+    #         if not file_path[0] == '.':
+    #             file_path =  f'./{self.config["rgb_dir"]}\\'+file_path
+    #         assert os.path.exists(file_path), f"{file_path} does not exist"
+    #         img = cv2.imread(file_path)
+    #         if img is None:
+    #             raise ValueError('Loaded image is None: {}'.format(file_path))
+    #     elif self.lmdb:
+    #         with self.env.begin(write=False) as txn:
+    #             # transfer the path format from rgb-path to lmdb-key
+    #             if file_path[0]=='.':
+    #                 file_path=file_path.replace('./datasets\\','')
+    #             # DEBUG: Add these lines here to see the mismatch
+    #             print(f"DEBUG: LMDB Lookup Key: {file_path}")
+    #             image_bin = txn.get(file_path.encode())
+    #             image_buf = np.frombuffer(image_bin, dtype=np.uint8)
+    #             img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #     img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
+    #     return Image.fromarray(np.array(img, dtype=np.uint8))
+
     def load_rgb(self, file_path):
-        """
-        Load an RGB image from a file path and resize it to a specified resolution.
-
-        Args:
-            file_path: A string indicating the path to the image file.
-
-        Returns:
-            An Image object containing the loaded and resized image.
-
-        Raises:
-            ValueError: If the loaded image is None.
-        """
-        size = self.config['resolution'] # if self.mode == "train" else self.config['resolution']
+        size = self.config['resolution']
         if not self.lmdb:
             if not file_path[0] == '.':
-                file_path =  f'./{self.config["rgb_dir"]}\\'+file_path
+                file_path = f'./{self.config["rgb_dir"]}/' + file_path
+            file_path = file_path.replace('\\', '/') # Ensure Linux slashes
             assert os.path.exists(file_path), f"{file_path} does not exist"
             img = cv2.imread(file_path)
             if img is None:
                 raise ValueError('Loaded image is None: {}'.format(file_path))
         elif self.lmdb:
             with self.env.begin(write=False) as txn:
-                # transfer the path format from rgb-path to lmdb-key
-                if file_path[0]=='.':
-                    file_path=file_path.replace('./datasets\\','')
+                # 1. Force forward slashes first
+                key = file_path.replace('\\', '/')
+                
+                # 2. Extract only the part starting with the dataset name
+                # We look for the position of your dataset name and cut off everything before it
+                dataset_identifier = "Celeb-DF-v1" 
+                if dataset_identifier in key:
+                    key = key[key.find(dataset_identifier):]
+                
+                # 3. Last-minute cleanup of any other common prefixes
+                key = key.replace('./', '').replace('datasets/', '')
 
-                image_bin = txn.get(file_path.encode())
+                image_bin = txn.get(key.encode())
+                
+                if image_bin is None:
+                    # Keep this print for one more run to be sure
+                    raise ValueError(f"Key '{key}' not found in LMDB!")
+                
                 image_buf = np.frombuffer(image_bin, dtype=np.uint8)
                 img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
+        
+        if img is None:
+            raise ValueError(f"Failed to decode image for path: {file_path}")
+
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
         return Image.fromarray(np.array(img, dtype=np.uint8))
-
 
     def load_mask(self, file_path):
         """

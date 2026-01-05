@@ -29,7 +29,7 @@ def create_lmdb_dataset(source_folder, lmdb_path, dataset_name, map_size):
             for file in files:
                 print(file)
                 image_path = os.path.join(root, file)
-                # 生成相对路径键
+                # 生成相对路径键 Generate Relative Path Key
                 relative_path = f"{dataset_name}\\" + os.path.relpath(image_path, source_folder)
                 key = relative_path.encode('utf-8')
                 # txn.delete(key)
@@ -73,7 +73,8 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     # from config.yaml load parameters
-    yaml_path = './preprocessing/config.yaml'
+    #yaml_path = './preprocessing/config.yaml'
+    yaml_path = '/app/preprocessing/config.yaml'
     # open the yaml file
     try:
         with open(yaml_path, 'r') as f:

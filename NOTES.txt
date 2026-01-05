@@ -2,6 +2,9 @@
 #build it
 sudo docker build -t deepfakebench -f Dockerfile_3modern .
 
+STEP 1.1
+pip install albumentations==1.1.0
+
 #STEP 2
 #Run the Docker Image with standard volume mapping
 #sudo docker run -itd -v /home/alex/Documents/DEV/2026_01_03_DEEPFAKEBENCH/DeepfakeBench/:/app/ --shm-size 64G deepfakebench
@@ -11,12 +14,13 @@ sudo docker run -itd \
   -v /home/alex/Desktop/DEV/2026_01_04_CVDEEPFAKEBENCH/CVDeepfakeBench/:/app/ \
   -v /media/alex/Marcus:/media/alex/Marcus \
   --shm-size 64G \
-  cvdeepfakebench
+  deepfakebench
 
 #STEP 3
 #Enter Docker Container
 #sudo docker exec -it cranky_kare /bin/bash
-sudo docker exec -it stupefied_pascal /bin/bash
+#sudo docker exec -it stupefied_pascal /bin/bash
+sudo docker exec -it zen_wescoff /bin/bash
 
 #STEP 3.1
 #Add ./training/weights/xception_best.pth
@@ -26,10 +30,20 @@ sudo docker exec -it stupefied_pascal /bin/bash
 ./datasets/rgb
 ./datasets/lmdb 
 
+#preprocess - 
+python preprocess.py
+python rearrange.py
+
+#dataset_size does not necessarily allocate this out of the gate but it does set a ceiling on the memroy map
+python dataset2lmdb_test.py --dataset_size 40
+python dataset2lmdb_test_3.py --dataset_size 40
+
+#drop xception pretrained into the /training/pretrained folder
+
 #troubleshooting this test command
 #python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" "Celeb-DF-v2" "DFDCP" --weights_path ./training/weights/xception_best.pth
 
-python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/xception_best.pth
+CUDA_VISIBLE_DEVICES="" python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/xception_best.pth
 
 #fixed the no run on GPU here
 /app/training/dataset/lsda_dataset.py

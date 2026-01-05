@@ -419,7 +419,7 @@ if __name__ == '__main__':
         with open(yaml_path, 'r') as f:
             config = yaml.safe_load(f)
     except yaml.parser.ParserError as e:
-        print("YAML file parsing error:", e)
+        print("YIKES, YAML file parsing error:", e)
 
     # Get the parameters
     dataset_name = config['preprocess']['dataset_name']['default']

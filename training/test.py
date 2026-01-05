@@ -188,6 +188,7 @@ def main():
         print('Fail to load the pre-trained weights')
     
     # start testing
+    print('About to Test')
     best_metric = test_epoch(model, test_data_loaders)
     print('===> Test Done!')
 
