@@ -1,5 +1,7 @@
 # 2025_01_04 Initial Fork - Castro Valley(CV) DeepfakeBench - 
 
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-brightgreen.svg)](https://creativecommons.org/licenses/by-nc/4.0/) ![Release .10](https://img.shields.io/badge/Release-1.0-brightgreen) ![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1-brightgreen) ![Python](https://img.shields.io/badge/Python-3.11.10-brightgreen)
+
 repair the dependency issues in the docker workflow to get the image to successfully build - this required advancing the PyTorch from 1.x to 2.x and CUDA version from 11 to 12
 
 ---
