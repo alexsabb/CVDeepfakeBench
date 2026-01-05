@@ -1,10 +1,11 @@
 preprocess:
-  dataset_name: # the name of dataset
+  dataset_name: 
     choices: ['FaceForensics++','Celeb-DF-v1', 'Celeb-DF-v2', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV']
-    default: 'FaceForensics++'
-  dataset_root_path: # the root path to the dataset
+    default: 'Celeb-DF-v1'
+  dataset_root_path: 
     type: str
-    default: 'F:\'
+    #default: #'/home/alex/Desktop/DEV/2026_01_04_CVDEEPFAKEBENCH/CVDeepfakeBench/datasets/rgb'
+    default: '/app/datasets/rgb'
   comp: # the compression level of videos, only in the dataset of FaceForensics++.
     choices: ['raw', 'c23', 'c40']
     default: 'c23'
