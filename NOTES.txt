@@ -37,13 +37,25 @@ python rearrange.py
 #dataset_size does not necessarily allocate this out of the gate but it does set a ceiling on the memroy map
 python dataset2lmdb_test.py --dataset_size 40
 python dataset2lmdb_test_3.py --dataset_size 40
+#success with 6 it created the stable lmdb out of Celeb-DF-v1 we think
+python dataset2lmdb_test_6.py --dataset_size 40
+
 
 #drop xception pretrained into the /training/pretrained folder
 
 #troubleshooting this test command
 #python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" "Celeb-DF-v2" "DFDCP" --weights_path ./training/weights/xception_best.pth
 
+#Success iwith xception
 CUDA_VISIBLE_DEVICES="" python3 training/test.py --detector_path ./training/config/detector/xception.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/xception_best.pth
+
+python3 training/test.py --detector_path ./training/config/detector/efficientnetb4.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/effnb4_best.pth
+
+python3 training/test.py --detector_path ./training/config/detector/meso4.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/meso4_best.pth
+
+python3 training/test.py --detector_path ./training/config/detector/meso4Inception.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/meso4Incep_best.pth
+
+python3 training/test.py --detector_path ./training/config/detector/capsule_net.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/capsule_best.pth
 
 #fixed the no run on GPU here
 /app/training/dataset/lsda_dataset.py
