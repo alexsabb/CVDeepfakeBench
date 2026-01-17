@@ -57,7 +57,55 @@ python3 training/test.py --detector_path ./training/config/detector/meso4Incepti
 
 python3 training/test.py --detector_path ./training/config/detector/capsule_net.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/capsule_best.pth
 
+#RUN 6 - FWA
+python3 training/test.py --detector_path ./training/config/detector/fwa.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/xception_best.pth
+
+#RUN 7 - TESTING the Weights_path change from xception to capsule -- hypotheiss confirmed, the weight path does need to point to the appropriately trained model to alignw ith the .yaml
+python3 training/test.py --detector_path ./training/config/detector/fwa.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/capsule_best.pth
+
+[SKIP]#RUN 8 - XRAY
+python3 training/test.py --detector_path ./training/config/detector/facexray.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/capsule_best.pth
+
+#RUN 9 - FFD
+python3 training/test.py --detector_path ./training/config/detector/ffd.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/ffd_best.pth
+
+#RUN 10 - Core
+python3 training/test.py --detector_path ./training/config/detector/core.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/core_best.pth
+
+#RUN 11 - Recce
+python3 training/test.py --detector_path ./training/config/detector/recce.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/recce_best.pth
+
+[NOPE]#RUN 12 - UCF
+python3 training/test.py --detector_path ./training/config/detector/ucf.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/ucf_best.pth
+
+#RUN 13 - F3NET
+python3 training/test.py --detector_path ./training/config/detector/f3net.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/f3net_best.pth
+
+#RUN 14 - SPSL
+python3 training/test.py --detector_path ./training/config/detector/spsl.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/spsl_best.pth
+
+#RUN 15 - SRM
+python3 training/test.py --detector_path ./training/config/detector/srm.yaml --test_dataset "Celeb-DF-v1" --weights_path ./training/weights/srm_best.pth
+
+
+
 #fixed the no run on GPU here
 /app/training/dataset/lsda_dataset.py
 
 #download CelebDF1
+
+----
+
+ON Kahunda cluster after successful lmdb.. to fix the dtype bug with imgaug
+Open this file in VS Code: /home/asabbat/DEV/2026_01_08_CVDFD/venv/lib/python3.12/site-packages/imgaug/imgaug.py
+replae at line 45 NP_FLOAT_TYPES = set(np.sctypes["float"])
+NP_FLOAT_TYPES = {np.float16, np.float32, np.float64}
+UPDATE - relac ehte 3lines in total with this
+# NEW CODE (Fixed for NumPy 2.0)
+NP_FLOAT_TYPES = {np.float16, np.float32, np.float64}
+NP_INT_TYPES = {np.int8, np.int16, np.int32, np.int64}
+NP_UINT_TYPES = {np.uint8, np.uint16, np.uint32, np.uint64}
+
+WORKS!!!!
+remember run when you get on a glidna node
+module load cuda

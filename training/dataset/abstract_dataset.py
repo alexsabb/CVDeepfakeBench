@@ -315,41 +315,134 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
     #     img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
     #     return Image.fromarray(np.array(img, dtype=np.uint8))
 
+    #WORKS (But handled CELEB-DF and UAFDV dfiferently)
+    # def load_rgb(self, file_path):
+    #     size = self.config['resolution']
+    #     if not self.lmdb:
+    #         if not file_path[0] == '.':
+    #             file_path = f'./{self.config["rgb_dir"]}/' + file_path
+    #         file_path = file_path.replace('\\', '/') # Ensure Linux slashes
+    #         assert os.path.exists(file_path), f"{file_path} does not exist"
+    #         img = cv2.imread(file_path)
+    #         if img is None:
+    #             raise ValueError('Loaded image is None: {}'.format(file_path))
+    #     elif self.lmdb:
+    #         with self.env.begin(write=False) as txn:
+    #             # 1. Force forward slashes first
+    #             key = file_path.replace('\\', '/')
+                
+    #             # 2. Extract only the part starting with the dataset name
+    #             # We look for the position of your dataset name and cut off everything before it
+    #             dataset_identifier = "Celeb-DF-v1" 
+    #             if dataset_identifier in key:
+    #                 key = key[key.find(dataset_identifier):]
+                
+    #             # 3. Last-minute cleanup of any other common prefixes
+    #             key = key.replace('./', '').replace('datasets/', '')
+
+    #             image_bin = txn.get(key.encode())
+                
+    #             if image_bin is None:
+    #                 # Keep this print for one more run to be sure
+    #                 raise ValueError(f"Key '{key}' not found in LMDB!")
+                
+    #             image_buf = np.frombuffer(image_bin, dtype=np.uint8)
+    #             img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
+        
+    #     if img is None:
+    #         raise ValueError(f"Failed to decode image for path: {file_path}")
+
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #     img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
+    #     return Image.fromarray(np.array(img, dtype=np.uint8))
+
+    # Works but doesn't handle FF-FS
+    # def load_rgb(self, file_path):
+    #     size = self.config['resolution']
+        
+    #     # 1. Standardize slashes immediately
+    #     file_path = file_path.replace('\\', '/')
+
+    #     if not self.lmdb:
+    #         # Local file system logic
+    #         if not file_path.startswith('.'):
+    #             file_path = f'./{self.config["rgb_dir"]}/' + file_path
+            
+    #         assert os.path.exists(file_path), f"{file_path} does not exist"
+    #         img = cv2.imread(file_path)
+        
+    #     else:
+    #         # Universal LMDB logic
+    #         with self.env.begin(write=False) as txn:
+    #             # Get the current dataset name (e.g., 'FF-F2F' or 'Celeb-DF-v2')
+    #             # This handles both train (list) and test (str) modes
+    #             current_datasets = self.config['train_dataset'] if self.mode == 'train' else [self.config['test_dataset']]
+                
+    #             key = file_path
+    #             # UNIVERSAL FIX: Strip everything before the dataset name to create a relative key
+    #             for ds_name in current_datasets:
+    #                 if ds_name in key:
+    #                     key = key[key.find(ds_name):]
+    #                     break
+                
+    #             # Clean up common artifacts
+    #             key = key.replace('./', '').replace('datasets/', '')
+                
+    #             image_bin = txn.get(key.encode())
+    #             if image_bin is None:
+    #                 raise ValueError(f"Key '{key}' not found in LMDB! Check if dataset2lmdb.py used relative paths.")
+                
+    #             image_buf = np.frombuffer(image_bin, dtype=np.uint8)
+    #             img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
+
+    #     if img is None:
+    #         raise ValueError(f"Failed to decode image for path: {file_path}")
+
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #     img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
+    #     return Image.fromarray(np.array(img, dtype=np.uint8))
+
     def load_rgb(self, file_path):
         size = self.config['resolution']
-        if not self.lmdb:
-            if not file_path[0] == '.':
-                file_path = f'./{self.config["rgb_dir"]}/' + file_path
-            file_path = file_path.replace('\\', '/') # Ensure Linux slashes
-            assert os.path.exists(file_path), f"{file_path} does not exist"
-            img = cv2.imread(file_path)
-            if img is None:
-                raise ValueError('Loaded image is None: {}'.format(file_path))
-        elif self.lmdb:
-            with self.env.begin(write=False) as txn:
-                # 1. Force forward slashes first
-                key = file_path.replace('\\', '/')
-                
-                # 2. Extract only the part starting with the dataset name
-                # We look for the position of your dataset name and cut off everything before it
-                dataset_identifier = "Celeb-DF-v1" 
-                if dataset_identifier in key:
-                    key = key[key.find(dataset_identifier):]
-                
-                # 3. Last-minute cleanup of any other common prefixes
-                key = key.replace('./', '').replace('datasets/', '')
+        # Standardize to forward slashes for cross-platform compatibility
+        file_path = file_path.replace('\\', '/')
 
+        if not self.lmdb:
+            # File system loading
+            if not os.path.exists(file_path):
+                # Fallback: try appending the rgb_dir if the JSON path is relative
+                file_path = os.path.join(self.config.get('rgb_dir', ''), file_path)
+            img = cv2.imread(file_path)
+        else:
+            # LMDB loading
+            with self.env.begin(write=False) as txn:
+                key = file_path
+                
+                # --- THE UNIVERSAL FIX ---
+                # If the full absolute path fails, try to find the 'FaceForensics++' 
+                # or 'FF-FS' part and use that as the relative key.
+                dataset_identifiers = ['FaceForensics++', 'FF-FS', 'Celeb-DF-v1', 'Celeb-DF-v2']
+                
                 image_bin = txn.get(key.encode())
                 
                 if image_bin is None:
-                    # Keep this print for one more run to be sure
-                    raise ValueError(f"Key '{key}' not found in LMDB!")
+                    for identifier in dataset_identifiers:
+                        if identifier in key:
+                            # Extract from the identifier onwards
+                            # e.g., 'FaceForensics++/manipulated_sequences/...'
+                            key = key[key.find(identifier):]
+                            image_bin = txn.get(key.encode())
+                            break
                 
+                if image_bin is None:
+                    raise ValueError(f"Key '{file_path}' (and relative '{key}') not found in LMDB!")
+                # -------------------------
+
                 image_buf = np.frombuffer(image_bin, dtype=np.uint8)
                 img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
-        
+
         if img is None:
-            raise ValueError(f"Failed to decode image for path: {file_path}")
+            raise ValueError(f"Failed to decode image: {file_path}")
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)

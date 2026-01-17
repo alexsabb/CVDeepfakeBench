@@ -109,6 +109,8 @@ def test_one_dataset(model, data_loader):
         predictions = inference(model, data_dict)
         label_lists += list(data_dict['label'].cpu().detach().numpy())
         prediction_lists += list(predictions['prob'].cpu().detach().numpy())
+        #prob_key = 'prob' if 'prob' in predictions else 'cls'
+        #prediction_lists += list(predictions[prob_key].cpu().detach().numpy())
         feature_lists += list(predictions['feat'].cpu().detach().numpy())
     
     return np.array(prediction_lists), np.array(label_lists),np.array(feature_lists)

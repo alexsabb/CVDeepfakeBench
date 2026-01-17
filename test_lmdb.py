@@ -1,7 +1,9 @@
 import lmdb
 
 # Path to your LMDB folder on the Marcus drive
-lmdb_path = "/media/alex/Marcus/00_DATA/10B_LMDB/Celeb-DF-v1_lmdb"
+#lmdb_path = "/media/alex/Marcus/00_DATA/10B_LMDB/Celeb-DF-v1_lmdb"
+#lmdb_path = "/projects/wg-CVDFD/00_DATA/10_LMDB/Celeb-DF-v1_lmdb"
+lmdb_path = "/projects/wg-CVDFD/00_DATA/10_LMDB/UADFV_lmdb"
 
 # Open the database in read-only mode
 env = lmdb.open(lmdb_path, readonly=True, lock=False)

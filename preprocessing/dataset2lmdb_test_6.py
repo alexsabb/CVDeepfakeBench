@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 from tqdm import tqdm
 
+#THIS WORKS FOR CELEB-DF-V1 and stores as relative path names
 def file_to_binary(file_path):
     """Convert images or numpy arrays to binary data"""
     if file_path.endswith('.npy'):
@@ -81,7 +82,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load config and set paths
-    yaml_path = '/app/preprocessing/config.yaml'
+    #yaml_path = '/app/preprocessing/config.yaml'
+    yaml_path = '/home/asabbat/DEV/2026_01_08_CVDFD/CVDeepfakeBench/preprocessing/config.yaml'
     with open(yaml_path, 'r') as f:
         config = yaml.safe_load(f)['to_lmdb']
 
