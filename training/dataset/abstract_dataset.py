@@ -402,6 +402,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
     #     img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
     #     return Image.fromarray(np.array(img, dtype=np.uint8))
 
+    #FF++ and CELEB-DF_V1 works but UADFV does not
     def load_rgb(self, file_path):
         size = self.config['resolution']
         # Standardize to forward slashes for cross-platform compatibility
@@ -421,7 +422,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
                 # --- THE UNIVERSAL FIX ---
                 # If the full absolute path fails, try to find the 'FaceForensics++' 
                 # or 'FF-FS' part and use that as the relative key.
-                dataset_identifiers = ['FaceForensics++', 'FF-FS', 'Celeb-DF-v1', 'Celeb-DF-v2']
+                dataset_identifiers = ['FaceForensics++', 'FF-FS', 'Celeb-DF-v1', 'Celeb-DF-v2', 'UADFV']
                 
                 image_bin = txn.get(key.encode())
                 
