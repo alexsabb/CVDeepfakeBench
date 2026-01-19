@@ -422,7 +422,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
                 # --- THE UNIVERSAL FIX ---
                 # If the full absolute path fails, try to find the 'FaceForensics++' 
                 # or 'FF-FS' part and use that as the relative key.
-                dataset_identifiers = ['FaceForensics++', 'FF-FS', 'Celeb-DF-v1', 'Celeb-DF-v2', 'UADFV']
+                dataset_identifiers = ['FaceForensics++', 'FF-FS', 'Celeb-DF-v1', 'Celeb-DF-v2', 'UADFV', 'DeepFakeDetection', 'DFDCP', 'DFDC', 'DeeperForensics-1.0', 'FaceShifter']
                 
                 image_bin = txn.get(key.encode())
                 

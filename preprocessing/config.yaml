@@ -26,7 +26,11 @@ rearrange:
     choices: ['FaceForensics++', 'DeepFakeDetection', 'Celeb-DF-v1', 'Celeb-DF-v2','DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
     #default: 'Celeb-DF-v1'
     #default: 'UADFV'
-    default: 'FaceForensics++'
+    #default: 'FaceForensics++'
+    #default: 'DFDC'
+    #default: 'DFDCP'
+    #default: 'Celeb-DF-v2'
+    default: 'DeepFakeDetection'
   dataset_root_path: # the root path to the dataset
     type: str
     #default: '/media/alex/Marcus/00_DATA/09_RGB'
@@ -52,13 +56,19 @@ to_lmdb:
     choices: ['FaceForensics++', 'DeepFakeDetection', 'Celeb-DF-v1', 'Celeb-DF-v2','DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
     #default: 'Celeb-DF-v1'
     #default: 'UADFV'
-    default: 'FaceForensics++'
+    #default: 'FaceForensics++'
+    #default: 'DFDC'
+    #default: 'DFDCP'
+    #default: 'Celeb-DF-v2'
+    default: 'DeepFakeDetection'
   dataset_root_path: # the root path to the dataset
     type: str
     #default: './datasets_v2'
     #default: '/media/alex/Marcus/00_DATA/09B_RGB'
     #default: '/media/alex/Marcus/00_DATA/09_RGB'
-    default: '/projects/wg-CVDFD/00_DATA/09_RGB'
+    #default: '/projects/wg-CVDFD/00_DATA/09_RGB'
+    default: '/projects/wg-CVDFD/00_DATA/09_RGB/FaceForensics++/manipulated_sequences'
+    #WOAH taht worked ^
   output_lmdb_dir: # the json path to the dataset
     type: str
     #default: './datasets_lmdbs'
